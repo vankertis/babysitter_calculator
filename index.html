@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Babyseater Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Babyseater Calculator</h1>
+        <div class="input-section">
+            <label for="rate">Hourly Rate:</label>
+            <input type="number" id="rate" placeholder="Enter hourly rate">
+        </div>
+
+        <!-- Checkbox to decide whether to use the same hours for all weeks -->
+        <div class="checkbox-section">
+            <input type="checkbox" id="applyAllWeeks" onclick="toggleWeeksVisibility()"> 
+            <label for="applyAllWeeks">Apply the same hours to all weeks this month</label>
+        </div>
+
+        <!-- Container for week input sections -->
+        <div id="week-sections">
+            <!-- Week blocks will be dynamically added here -->
+        </div>
+        
+        <button onclick="calculatePayment()">Calculate</button>
+        <div class="output-section">
+            <p>Weekly Payment: <span id="weeklyPayment"></span></p>
+            <p>Monthly Payment: <span id="monthlyPayment"></span></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

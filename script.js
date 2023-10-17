@@ -1,19 +1,46 @@
 document.addEventListener("DOMContentLoaded", function() {
     generateWeekInputs();
     toggleWeeksVisibility(); // To initially hide/show based on checkbox state
+    
+    const firstWeekInputs = document.querySelectorAll(".week-section:first-child .day input");
+    firstWeekInputs.forEach(input => {
+        input.addEventListener('input', copyFirstWeekValues);
+    });
 });
+
+function copyFirstWeekValues() {
+    if (document.getElementById("applyAllWeeks").checked) {
+        const weekSections = document.querySelectorAll(".week-section");
+        const firstWeekDays = weekSections[0].querySelectorAll(".day input");
+
+        weekSections.forEach((section, index) => {
+            if (index !== 0) {
+                const currentWeekDays = section.querySelectorAll(".day input");
+                currentWeekDays.forEach((input, idx) => {
+                    input.value = firstWeekDays[idx].value;
+                });
+            }
+        });
+    }
+}
+
 
 function toggleWeeksVisibility() {
     const applyAllWeeks = document.getElementById("applyAllWeeks").checked;
     const weekSections = document.querySelectorAll(".week-section");
 
     if (applyAllWeeks) {
-        // Only show the first week section
+        const firstWeekDays = weekSections[0].querySelectorAll(".day input");
+
         weekSections.forEach((section, index) => {
             if (index === 0) {
                 section.style.display = "block";
             } else {
                 section.style.display = "none";
+                const currentWeekDays = section.querySelectorAll(".day input");
+                currentWeekDays.forEach((input, idx) => {
+                    input.value = firstWeekDays[idx].value;
+                });
             }
         });
     } else {
@@ -23,6 +50,9 @@ function toggleWeeksVisibility() {
         });
     }
 }
+
+
+
 
 function generateWeekInputs() {
     const weekContainer = document.getElementById("week-sections");
@@ -98,7 +128,7 @@ function calculatePayment() {
     const weekSections = document.querySelectorAll(".week-section");
     let totalMonthlyHours = 0;
 
-    weekSections.forEach((week, index) => {
+    weekSections.forEach((week) => {
         const days = ['mon', 'tue', 'wed', 'thu', 'fri'];
         let weeklyHours = 0;
 

@@ -28,51 +28,54 @@ function generateWeekInputs() {
     const weekContainer = document.getElementById("week-sections");
     const currentDate = new Date();
     const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-    
+
     weekContainer.innerHTML = ""; // Clear existing week sections
 
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-    let currentDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
-    let weekNumber = 1;
-    let runningDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1); // Start from the first day of the month
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    for (let i = 1; i <= daysInMonth;) {
-        if (currentDay === 6 || currentDay === 0) { // Skip weekends
-            i++;
-            runningDate.setDate(runningDate.getDate() + 1);
-            currentDay = (currentDay + 1) % 7;
+    let weekDiv;
+    let weekContent = "";
+    let weekNumber = 1;
+    let startDate;
+
+    for (let i = 1; i <= daysInMonth; i++) {
+        const runningDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
+        const dayName = days[runningDate.getDay()];
+
+        if (!startDate) {
+            startDate = runningDate.toDateString();
+        }
+
+        // Skip weekends
+        if (dayName === "Saturday" || dayName === "Sunday") {
             continue;
         }
-        
-        const weekDiv = document.createElement("div");
-        weekDiv.classList.add("week-section");
-        
-        const startDate = runningDate.toDateString(); // Start date of the current week
-        
-        while (currentDay > 0 && currentDay < 6 && i <= daysInMonth) { // Only consider weekdays
-            i++;
-            runningDate.setDate(runningDate.getDate() + 1);
-            currentDay = (currentDay + 1) % 7;
+
+        weekContent += `
+            <div class="day">
+                <label for="${dayName.toLowerCase()}${i}">${dayName} ${i}:</label>
+                <input type="number" id="${dayName.toLowerCase()}${i}" placeholder="Hours">
+            </div>
+        `;
+
+        // If it's Friday or the last day of the month, append the week
+        if (dayName === "Friday" || i === daysInMonth) {
+            weekDiv = document.createElement("div");
+            weekDiv.classList.add("week-section");
+            weekDiv.innerHTML = `
+                <h2 onclick="toggleCollapse(this)">Week ${weekNumber} - ${startDate} - ${runningDate.toDateString()}</h2>
+                <div class="weekdays">${weekContent}</div>
+                <div class="output-section">
+                    <p>Weekly Payment for Week ${weekNumber}: <span></span></p>
+                </div>
+            `;
+            weekContainer.appendChild(weekDiv);
+
+            // Reset for the next week
+            weekNumber++;
+            weekContent = "";
+            startDate = null;
         }
-        
-        const endDate = runningDate.toDateString(); // End date of the current week
-
-        weekDiv.innerHTML = `<h2 onclick="toggleCollapse(this)">Week ${weekNumber} - ${startDate} - ${endDate}</h2>
-                             <div class="weekdays">`;
-        
-        days.forEach(day => {
-            weekDiv.innerHTML += `<div class="day">
-                <label for="${day.toLowerCase()}${i}">${day}:</label>
-                <input type="number" id="${day.toLowerCase()}${i}" placeholder="Hours">
-            </div>`;
-        });
-
-        weekDiv.innerHTML += `</div><div class="output-section">
-                                <p>Weekly Payment for Week ${weekNumber}: <span></span></p>
-                            </div>`;
-        
-        weekContainer.appendChild(weekDiv);
-        weekNumber++;
     }
 }
 
